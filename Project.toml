@@ -4,6 +4,7 @@ authors = ["Thomas Wutzler <twutz@bgc-jena.mpg.de> and contributors"]
 version = "0.1.0-DEV"
 
 [deps]
+Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 
 [compat]
 julia = "1.6"
@@ -18,5 +19,4 @@ ComponentArrays = "b0b7db55-cfe3-40fc-9ded-d10e2dbeff66"
 
 [extras]
 ComponentArrays = "b0b7db55-cfe3-40fc-9ded-d10e2dbeff66"
-Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 

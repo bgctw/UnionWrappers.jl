@@ -7,6 +7,7 @@ using Aqua
         Aqua.test_all(
             UnionWrappers;
             unbound_args = false, # does not recognize NamedTuple{K, NTuple{N,E}}
+            stale_deps=(ignore=[:Requires],),
         )
     end
 end
