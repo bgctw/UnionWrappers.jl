@@ -45,13 +45,13 @@ and its properties preserved in type parameters.
 
 The default produces as `UnionWrapper{Val{:Any}()}`.
 
-See `unwrap(w)` and `wrapped_type(w)` to extract the original value or its type.
+See `unwrap(w)` and `wrapped_T(w)` to extract the original value or its type.
 """
 function wrap end,
 function unwrap(w::UnionWrapper) 
     w.value
 end,
-function wrapped_type(w::AbstractUnionWrapper{T}) where {T} 
+function wrapped_T(w::AbstractUnionWrapper{T}) where {T} 
     T
 end
 

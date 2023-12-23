@@ -5,5 +5,6 @@ using Test, SafeTestsets
     a = 2
     tw = wrap(a)
     @test unwrap(tw) == a
+    @test wrapped_T(tw) == Val(:Any)
 end
 

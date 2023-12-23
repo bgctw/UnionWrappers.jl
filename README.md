@@ -51,7 +51,7 @@ However, using named arguments is not always a viable solution.
 Sometimes, some dispatch information is required on the wrapper type as in
 cases below.
 
-# Dispatching on wrapped type
+# Dispatching on wrapped type parameter
 
 The AbstractUnionWrapper type has a type parameter that can be used
 to dispatch on different wrapped types.
@@ -68,7 +68,7 @@ f_dispatch_type(wrap((1,2)))
 f_dispatch_type(wrap("Hello"))
 ```
 
-The user can define own wrapper-type aliases to dispatch on and 
+The user can define own wrapper-type aliases to dispatch on, and then 
 extend the wrap method.
 ```
 # define user-define wrapper type
