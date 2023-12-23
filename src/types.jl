@@ -37,7 +37,7 @@ end
 """
     wrap(x)
 
-Wraps into a AbstractUnionWrapper type to aovid compilation for types with
+Wraps into a AbstractUnionWrapper type to avoid compilation for types with
 much information in type parameters.
 
 Specific methods create different Wrappers with a small amount of  information on the type
