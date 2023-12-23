@@ -5,6 +5,7 @@
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 Reduces compilation by wrapping type-parameter-rich components.
+For help see the docstring of `wrap`.
 
 # Problem
 
@@ -27,7 +28,7 @@ using MethodAnalysis # to show compiled method instances
 using UnionWrappers
 function f_higher(w)
   # main functionality and dispatch independent of w
-  sum(unwrap(w))  # need to unwrap to actually use it
+  sum(unwrap(w))  # unwrap to actually use it in lower-level functions
 end
 
 f_higher(wrap((a=1, b=2)))
