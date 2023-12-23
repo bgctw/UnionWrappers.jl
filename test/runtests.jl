@@ -16,6 +16,10 @@ const GROUP = get(ENV, "GROUP", "All") # defined in in CI.yml
         @time @safetestset "test_tuples" include("test_tuples.jl")
         #@safetestset "Tests" include("test/test_componentarrays.jl")
         @time @safetestset "test_componentarrays" include("test_componentarrays.jl")
+        #@safetestset "Tests" include("test/test_dispatch.jl")
+        @time @safetestset "test_dispatch" include("test_dispatch.jl")
+        #@safetestset "Tests" include("test/test_staticarrays_inferred.jl")
+        @time @safetestset "test_staticarrays_inferred" include("test_staticarrays_inferred.jl")
     end
     if GROUP == "All" || GROUP == "JET"
         #@safetestset "Tests" include("test/test_JET.jl")
