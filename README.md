@@ -10,7 +10,7 @@ For help see the docstring of `wrap`.
 # Problem
 
 Julia recompiles functions for new argument types, and argument types change 
-with type parameters. This leads to compiling many methods, when using types
+with type parameters. This results in compiling many method instances when using types
 that store much informationin in their type parameters.
 
 For example, when a function takes a `NamedTuple` argument, it will be recompiled
@@ -61,15 +61,23 @@ to help with dispatch.
 ```
 f_dispatch_type(w::NTupleWrapper) = "NTuple"
 f_dispatch_type(w::NamedTupleWrapper) = "NamedTuple"
-f_dispatch_type(w::AbstractUnionWrapper) = "any other type"
+f_dispatch_type(w::AbstractUnionWrapper) = "default for other types"
 
 f_dispatch_type(wrap((a=1, b=2)))
 f_dispatch_type(wrap((1,2)))
 f_dispatch_type(wrap("Hello"))
 ```
 
-The user can just define more of those aliases and repestice constructors.
-An example can be found in `src/tuples.jl`.
+The user can define own wrapper-type aliases to dispatch on and 
+extend the wrap method.
+```
+# define user-define wrapper type
+StringWrapper = UnionWrapper{Val(:String)}
+UnionWrappers.wrap(s::AbstractString) = StringWrapper(s)
+
+f_dispatch_type(w::StringWrapper) = "String"
+f_dispatch_type(wrap("Hello"))
+```
 
 # Dispatching on element type of wrapped objects
 
