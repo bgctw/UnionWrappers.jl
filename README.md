@@ -4,25 +4,26 @@
 [![Coverage](https://codecov.io/gh/bgctw/UnionWrappers.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/bgctw/UnionWrappers.jl)
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
-Reduces recompilation by wrapping type-parameter rich components.
+Reduces compilation by wrapping type-parameter-rich components.
 
 # Problem
 
-Julia recompiles functions for new types of inputs and input types change 
-with type parameters. This leads to many recompilations, when using Types
-that store much informationin their type parameters.
+Julia recompiles functions for new argument types, and argument types change 
+with type parameters. This leads to compiling many methods, when using types
+that store much informationin in their type parameters.
 
-E.g. When a function takes a NamedTuple argument, it will be recompiled
+For example, when a function takes a `NamedTuple` argument, it will be recompiled
 for each new value with different names.
 
-This package allows to pass arguments around at higher-level functions by wrapping
-them into types with fewer type information. 
+This package aovids compilation by at higher-level functions by passing around arguments that are wrapped into types with fewer type information. 
 Only when specific dispatch or runtime-performa is required at the lower-level
-functions, pass the unwrapped argument to the respective function.
+functions, pass the unwrapped argument can be passed.
 
 # Example
 
 ```
+using MethodAnalysis # to show compiled method instances
+
 using UnionWrappers
 function f_higher(w)
   # main functionality and dispatch independent of w
@@ -32,7 +33,14 @@ end
 f_higher(UnionWrapper((a=1, b=2)))
 f_higher(UnionWrapper((a=1, c=2)))
 f_higher(UnionWrapper((a=1, d=2)))
-methods(f_higher)           # only one method compiled
+methodinstances(f_higher)           # only one method compiled
+
+# Without wrapper:
+foo(x) = sum(x)
+foo((a=1, b=2))
+foo((a=1, c=2))
+foo((a=1, d=2))
+methodinstances(foo)           # 3 new instances compiled
 ```
 
 In the given simple example, its recommend to alternatively pass the unwrapped
