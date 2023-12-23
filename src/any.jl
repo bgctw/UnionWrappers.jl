@@ -1,2 +1,2 @@
 AnyWrapper = UnionWrapper{Val(:Any)}
-UnionWrapper(any::Any) = AnyWrapper(any)
+wrap(any::Any) = AnyWrapper(any)

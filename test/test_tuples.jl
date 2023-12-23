@@ -4,7 +4,7 @@ using Test, SafeTestsets
 @testset "ntuple" begin
     t = (:a, :b)
     t isa NTuple{2,Symbol}
-    tw = UnionWrapper(t)
+    tw = wrap(t)
     @test length(tw) == 2
     @test eltype(tw) == Symbol
     @test unwrap(tw) == t
@@ -16,7 +16,7 @@ end
 end;
 
 @testset "one-length tuple" begin
-    tw = UnionWrapper((:a,))
+    tw = wrap((:a,))
     @test length(tw) == 1
     @test eltype(tw) == Symbol
 end
@@ -25,7 +25,7 @@ end
     t = ()
     t isa NTuple
     eltype(t)
-    tw = UnionWrapper(())
+    tw = wrap(())
     @test length(tw) == 0
     @test eltype(tw) == eltype(t)
 end
@@ -33,7 +33,7 @@ end
 @testset "NamedTuple" begin
     t = (a = :a, b = :b)
     t isa NamedTuple
-    tw = UnionWrapper(t)
+    tw = wrap(t)
     @test length(tw) == 2
     @test eltype(tw) == Symbol
 end
@@ -43,7 +43,7 @@ end
 end;
 
 @testset "one-length NamedTuple" begin
-    tw = UnionWrapper((a = :a,))
+    tw = wrap((a = :a,))
     @test length(tw) == 1
     @test eltype(tw) == Symbol
 end
@@ -52,7 +52,7 @@ end
     t = NamedTuple{()}(())
     t isa NamedTuple
     eltype(t)
-    tw = UnionWrapper(t)
+    tw = wrap(t)
     @test length(tw) == 0
     @test eltype(tw) == eltype(t)
 end

@@ -8,6 +8,7 @@ end
 unwrap(w::UnionWrapper) = w.value
 wrapped_type(w::AbstractUnionWrapper{T}) where {T} = T
 
+function wrap end
 
 struct EltypeWrapper{E,T} <: AbstractEltypeWrapper{E,T}
     value::Any

@@ -30,9 +30,9 @@ function f_higher(w)
   sum(unwrap(w))  # need to unwrap to actually use it
 end
 
-f_higher(UnionWrapper((a=1, b=2)))
-f_higher(UnionWrapper((a=1, c=2)))
-f_higher(UnionWrapper((a=1, d=2)))
+f_higher(wrap((a=1, b=2)))
+f_higher(wrap((a=1, c=2)))
+f_higher(wrap((a=1, d=2)))
 methodinstances(f_higher)           # only one method compiled
 
 # Without wrapper:
@@ -47,7 +47,7 @@ In the given simple example, its recommend to alternatively pass the unwrapped
 w by using named arguments to avoid specializing on it. 
 However, using named arguments is not always a viable solution.
 
-Moreover, some information is required on dispatch sometimes as in the
+Sometimes, some dispatch information is required on the wrapper type as in
 cases below.
 
 # Dispatching on wrapped type
@@ -62,9 +62,9 @@ f_dispatch_type(w::NTupleWrapper) = "NTuple"
 f_dispatch_type(w::NamedTupleWrapper) = "NamedTuple"
 f_dispatch_type(w::AbstractUnionWrapper) = "any other type"
 
-f_dispatch_type(UnionWrapper((a=1, b=2)))
-f_dispatch_type(UnionWrapper((1,2)))
-f_dispatch_type(UnionWrapper("Hello"))
+f_dispatch_type(wrap((a=1, b=2)))
+f_dispatch_type(wrap((1,2)))
+f_dispatch_type(wrap("Hello"))
 ```
 
 The user can just define more of those aliases and repestice constructors.
@@ -80,9 +80,9 @@ and can be used for dispatch.
 f_dispatch_eltype(w::AbstractEltypeWrapper{Float64}) = "Float"
 f_dispatch_eltype(w::AbstractEltypeWrapper{Int}) = "Int"
 
-f_dispatch_eltype(UnionWrapper((1,2)))
-f_dispatch_eltype(UnionWrapper((1.0,2.0)))
-f_dispatch_eltype(UnionWrapper((1,2.0))) # error because of mixed type -> Any
+f_dispatch_eltype(wrap((1,2)))
+f_dispatch_eltype(wrap((1.0,2.0)))
+f_dispatch_eltype(wrap((1,2.0))) # error because of mixed type -> Any
 ```
 
 # Using Length information
@@ -94,8 +94,8 @@ and can be used to dispatch
 f_dispatch_length(w::AbstractLengthWrapper{2}) = "two items"
 f_dispatch_length(w::AbstractLengthWrapper{0}) = "zero items"
 
-f_dispatch_length(UnionWrapper((1.0,2.0)))
-f_dispatch_length(UnionWrapper(()))
+f_dispatch_length(wrap((1.0,2.0)))
+f_dispatch_length(wrap(()))
 ```
 
 Or it can be used to create StaticVectors.
@@ -103,7 +103,7 @@ Or it can be used to create StaticVectors.
 ```
 using StaticArrays, Test
 f_gen_static(w::AbstractLengthWrapper{N,E}) where {N,E} = SVector{N,E}(unwrap(w)...)::SVector{N,E}
-@inferred f_gen_static(UnionWrapper((a=1,b=2)))
+@inferred f_gen_static(wrap((a=1,b=2)))
 ```
 
 
