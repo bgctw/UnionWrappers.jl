@@ -10,6 +10,8 @@ const GROUP = get(ENV, "GROUP", "All") # defined in in CI.yml
 
 @time begin
     if GROUP == "All" || GROUP == "Basic"
+        #@safetestset "Tests" include("test/test_any.jl")
+        @time @safetestset "test_any" include("test_any.jl")
         #@safetestset "Tests" include("test/test_tuples.jl")
         @time @safetestset "test_tuples" include("test_tuples.jl")
         #@safetestset "Tests" include("test/test_componentarrays.jl")

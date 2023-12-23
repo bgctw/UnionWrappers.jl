@@ -5,6 +5,9 @@ export UnionWrapper, EltypeWrapper, LengthWrapper
 export unwrap, wrapped_type
 include("types.jl")
 
+export AnyWrapper
+include("any.jl")
+
 export NTupleWrapper, NamedTupleWrapper
 include("tuples.jl")
 
