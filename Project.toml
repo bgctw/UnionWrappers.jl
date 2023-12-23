@@ -1,0 +1,7 @@
+name = "UnionWrappers"
+uuid = "74a707ba-e539-4b25-b122-a64fb4a1bb11"
+authors = ["Thomas Wutzler <twutz@bgc-jena.mpg.de> and contributors"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1"
