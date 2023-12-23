@@ -2,7 +2,7 @@ module UnionWrappers
 
 export AbstractUnionWrapper, AbstractEltypeWrapper, AbstractLengthWrapper
 export UnionWrapper, EltypeWrapper, LengthWrapper
-export unwrap, wrapped_type
+export wrap, unwrap, wrapped_type
 include("types.jl")
 
 export AnyWrapper

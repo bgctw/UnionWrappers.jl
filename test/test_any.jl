@@ -3,7 +3,7 @@ using Test, SafeTestsets
 
 @testset "any: Int" begin
     a = 2
-    tw = UnionWrapper(a)
+    tw = wrap(a)
     @test unwrap(tw) == a
 end
 
