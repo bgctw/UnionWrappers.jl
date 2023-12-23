@@ -1,21 +1,20 @@
-abstract type AbstractUnionWrapper end
-abstract type AbstractEltypeWrapper <: AbstractUnionWrapper end
-abstract type AbstractLengthWrapper <: AbstractEltypeWrapper end
+abstract type AbstractUnionWrapper{T} end
+abstract type AbstractEltypeWrapper{E,T} <: AbstractUnionWrapper{T} end
+abstract type AbstractLengthWrapper{N,E,T} <: AbstractEltypeWrapper{E,T} end
 
-struct UnionWrapper{T} <: AbstractUnionWrapper
+struct UnionWrapper{T} <: AbstractUnionWrapper{T}
     value::Any
 end
 unwrap(w::UnionWrapper) = w.value
-wrapped_type(w::UnionWrapper{T}) where {T} = T
+wrapped_type(w::AbstractUnionWrapper{T}) where {T} = T
 
 
-struct EltypeWrapper{E,T} <: AbstractEltypeWrapper
+struct EltypeWrapper{E,T} <: AbstractEltypeWrapper{E,T}
     value::Any
 end
 unwrap(w::EltypeWrapper) = w.value
-wrapped_type(w::EltypeWrapper{E,T}) where {T,E} = T
 
-Base.eltype(w::EltypeWrapper{E,T}) where {T,E} = E
+Base.eltype(w::AbstractEltypeWrapper{E,T}) where {T,E} = E
 
 # already covered, because its immutable struct
 # function setfield(w::AbstractEltypeWrapper, name) 
@@ -25,11 +24,9 @@ Base.eltype(w::EltypeWrapper{E,T}) where {T,E} = E
 # end
 
 
-struct LengthWrapper{N,E,T} <: AbstractLengthWrapper
+struct LengthWrapper{N,E,T} <: AbstractLengthWrapper{N,E,T}
     value::Any
 end
 unwrap(w::LengthWrapper) = w.value
-wrapped_type(w::LengthWrapper{N,E,T}) where {N,E,T} = T
-Base.eltype(w::LengthWrapper{N,E,T}) where {N,E,T} = E
 
-Base.length(w::LengthWrapper{N,E,T}) where {N,E,T} = N
+Base.length(w::AbstractLengthWrapper{N,E,T}) where {N,E,T} = N
