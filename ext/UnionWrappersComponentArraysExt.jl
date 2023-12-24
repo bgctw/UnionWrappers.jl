@@ -12,11 +12,12 @@ using UnionWrappers
 axis_length(ax::AbstractAxis) = lastindex(ax) - firstindex(ax) + 1
 axis_length(::FlatAxis) = 0
 
-CP.wrap(cv::ComponentArray) = ComponentArrayWrapper{eltype(cv)}(cv)
+CP.wrap_eltype(cv::ComponentArray) = CP.EltypeWrapper{eltype(cv),ComponentArray}(cv)
 
-function CP.wrap(cv::ComponentVector)
-    length_cv = axis_length(first(getaxes(cv))) # type-stable length
-    ComponentVectorWrapper{length_cv,eltype(cv)}(cv)
+# TODO store all dimensions instead of only length of first axis
+function CP.wrap_size(cv::ComponentArray)
+    size_cv = axis_length.(getaxes(cv)) # type-stable length
+    CP.SizeWrapper{size_cv,eltype(cv),ComponentArray}(cv)
 end
 
 end

@@ -1,17 +1,17 @@
 module UnionWrappers
 
-export AbstractUnionWrapper, AbstractEltypeWrapper, AbstractLengthWrapper
-export UnionWrapper, EltypeWrapper, LengthWrapper
-export wrap, unwrap, wrapped_type
+export AbstractUnionWrapper, AbstractEltypeWrapper, AbstractSizeWrapper
+export UnionWrapper, EltypeWrapper, SizeWrapper # to allow user define own wrappers
+export wrap_union, wrap_eltype, wrap_size, unwrap, wrapped_union
 include("types.jl")
 
-export AnyWrapper
+#export AnyWrapper
 include("any.jl")
 
-export NTupleWrapper, NamedTupleWrapper
+#export NTupleWrapper, NamedTupleWrapper
 include("tuples.jl")
 
-export ComponentArrayWrapper, ComponentVectorWrapper
+#export ComponentArrayWrapper, ComponentVectorWrapper
 include("componentarrays.jl")
 
 if !isdefined(Base, :get_extension)

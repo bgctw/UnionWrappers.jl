@@ -1,9 +1,14 @@
 using UnionWrappers
 using Test
+using ComponentArrays
 using StaticArrays
 
 @testset "StaticArrays" begin
-  f_gen_static(w::AbstractLengthWrapper{N,E}) where {N,E} = SVector{N,E}(unwrap(w)...)::SVector{N,E}
-  res = @inferred f_gen_static(wrap((a=1,b=2)))
+  function f_gen_static(w::AbstractSizeWrapper{D,E}) where {D,E} 
+    S = Tuple{D...}; L = prod(D); N = length(D)
+    SArray{S,E,N,L}(unwrap(w)...)::SArray{S,E,N,L}
+  end
+  w = wrap_size(ComponentVector(a=1,b=2))
+  res = @inferred f_gen_static(w)
   @test res isa SVector
 end;
