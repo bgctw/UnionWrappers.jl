@@ -20,15 +20,16 @@ function wrap_eltype end
 Base.eltype(w::AbstractEltypeWrapper{E,T}) where {T,E} = E
 
 """
-    AbstractSizeWrapper{N,E,T} <: AbstractEltypeWrapper{E,T}
+    AbstractSizeWrapper{D,E,T} <: AbstractEltypeWrapper{E,T}
 
 Wrapper that stores an additional sizes of dimensions as a type parameter.
 The size can be queried by `size(w)` and the number of elements can be queried using `length(w)`.
 There are implementations of `wrap_size` for ComponentArray.
 """    
-abstract type AbstractSizeWrapper{N,E,T} <: AbstractEltypeWrapper{E,T} end,
+abstract type AbstractSizeWrapper{D,E,T} <: AbstractEltypeWrapper{E,T} end,
 function wrap_size end
-Base.length(w::AbstractSizeWrapper{N,E,T}) where {N,E,T} = N
+Base.length(w::AbstractSizeWrapper{D,E,T}) where {D,E,T} = prod(D)
+Base.size(w::AbstractSizeWrapper{D,E,T}) where {D,E,T} = D
 
 
 struct UnionWrapper{T} <: AbstractUnionWrapper{T}
@@ -72,7 +73,7 @@ unwrap(w::EltypeWrapper) = w.value
 # end
 
 
-struct SizeWrapper{N,E,T} <: AbstractSizeWrapper{N,E,T}
+struct SizeWrapper{D,E,T} <: AbstractSizeWrapper{D,E,T}
     value::T
 end
 unwrap(w::SizeWrapper) = w.value

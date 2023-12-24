@@ -16,8 +16,8 @@ CP.wrap_eltype(cv::ComponentArray) = CP.EltypeWrapper{eltype(cv),ComponentArray}
 
 # TODO store all dimensions instead of only length of first axis
 function CP.wrap_size(cv::ComponentArray)
-    length_cv = axis_length(first(getaxes(cv))) # type-stable length
-    CP.SizeWrapper{length_cv,eltype(cv),ComponentArray}(cv)
+    size_cv = axis_length.(getaxes(cv)) # type-stable length
+    CP.SizeWrapper{size_cv,eltype(cv),ComponentArray}(cv)
 end
 
 end

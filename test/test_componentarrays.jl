@@ -7,6 +7,7 @@ using ComponentArrays
     length(cv)
     cvw = @inferred wrap_size(cv)
     @test length(cvw) == length(cv)
+    @test size(cvw) == size(cv)
     @test eltype(cvw) == eltype(cv)
     @test wrapped_union(cvw) == ComponentArray
     @test unwrap(cvw) == cv

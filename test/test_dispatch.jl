@@ -22,8 +22,8 @@ end;
 end;
 
 @testset "dispatch length" begin
-  f_dispatch_length(w::AbstractSizeWrapper{2}) = "two items"
-  f_dispatch_length(w::AbstractSizeWrapper{0}) = "zero items"
+  f_dispatch_length(w::AbstractSizeWrapper{(2,)}) = "two items"
+  f_dispatch_length(w::AbstractSizeWrapper{(0,)}) = "zero items"
   
   @test f_dispatch_length(wrap_size(ComponentVector(a=1.0,b=2.0))) == "two items"
   @test f_dispatch_length(wrap_size(ComponentVector())) == "zero items"

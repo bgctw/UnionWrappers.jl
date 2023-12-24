@@ -102,8 +102,8 @@ The can be stored in the wrapper in addition to the element type using `wrap_siz
 Then, they can be used in dispatch.
 
 ```
-f_dispatch_length(w::AbstractSizeWrapper{2}) = "two items"
-f_dispatch_length(w::AbstractSizeWrapper{0}) = "zero items"
+f_dispatch_length(w::AbstractSizeWrapper{(2,)}) = "two items"
+f_dispatch_length(w::AbstractSizeWrapper{(0,)}) = "zero items"
 
 using ComponentArrays
 f_dispatch_length(wrap_size(ComponentVector(a=1.0,b=2.0)))
@@ -115,15 +115,10 @@ Or they can be used to create StaticVectors in a stable type-inferred manner.
 ```
 using StaticArrays, Test
 using ComponentArrays
-function f_gen_static(w::AbstractSizeWrapper{N,E}) where {N,E} 
-  SVector{N,E}(unwrap(w)...)::SVector{N,E}
+function f_gen_static(w::AbstractSizeWrapper{D,E}) where {D,E} 
+  S = Tuple{D...}; L = prod(D); N = length(D)
+  SArray{S,E,N,L}(unwrap(w)...)::SArray{S,E,N,L}
 end
-@inferred f_gen_static(wrap_size(ComponentVector(a=1,b=2)))
+w = wrap_size(ComponentVector(a=1,b=2))
+@inferred f_gen_static(w)
 ```
-
-
-
-
-
-
-
