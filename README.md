@@ -5,7 +5,7 @@
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 Reduces compilation by wrapping type-parameter-rich components.
-For help see the docstring of `wrap`.
+For help see the docstring of `wrap_union`.
 
 # Problem
 
@@ -31,9 +31,9 @@ function f_higher(w)
   sum(unwrap(w))  # unwrap to actually use it in lower-level functions
 end
 
-f_higher(wrap((a=1, b=2)))
-f_higher(wrap((a=1, c=2)))
-f_higher(wrap((a=1, d=2)))
+f_higher(wrap_union((a=1, b=2)))
+f_higher(wrap_union((a=1, c=2)))
+f_higher(wrap_union((a=1, d=2)))
 methodinstances(f_higher)           # only one method compiled
 
 # Without wrapper:
@@ -59,24 +59,23 @@ There are several aliases: (`AnyWrapper`, `NTupleWrapper`, `NamedTupleWrapper`, 
 to help with dispatch.
 
 ```
-f_dispatch_type(w::NTupleWrapper) = "NTuple"
-f_dispatch_type(w::NamedTupleWrapper) = "NamedTuple"
-f_dispatch_type(w::AbstractUnionWrapper) = "default for other types"
+f_dispatch_type(w::AbstractUnionWrapper{NTuple}) = "NTuple"
+f_dispatch_type(w::AbstractUnionWrapper{NamedTuple}) = "NamedTuple"
+f_dispatch_type(w::AbstractUnionWrapper) = "any other type"
 
-f_dispatch_type(wrap((a=1, b=2)))
-f_dispatch_type(wrap((1,2)))
-f_dispatch_type(wrap("Hello"))
+f_dispatch_type(wrap_union((a=1, b=2)))
+f_dispatch_type(wrap_union((1,2)))
+f_dispatch_type(wrap_union("Hello"))
 ```
 
 The user can define own wrapper-type aliases to dispatch on, and then 
-extend the wrap method.
+extend the wrap_union method.
 ```
 # define user-define wrapper type
-StringWrapper = UnionWrapper{Val(:String)}
-UnionWrappers.wrap(s::AbstractString) = StringWrapper(s)
+UnionWrappers.wrap_union(s::AbstractString) = UnionWrapper{AbstractString}(s)
 
-f_dispatch_type(w::StringWrapper) = "String"
-f_dispatch_type(wrap("Hello"))
+f_dispatch_type(w::AbstractUnionWrapper{AbstractString}) = "String"
+f_dispatch_type(wrap_union("Hello"))
 ```
 
 # Dispatching on element type of wrapped objects
@@ -88,10 +87,12 @@ and can be used for dispatch.
 ```
 f_dispatch_eltype(w::AbstractEltypeWrapper{Float64}) = "Float"
 f_dispatch_eltype(w::AbstractEltypeWrapper{Int}) = "Int"
+f_dispatch_eltype(w::AbstractUnionWrapper) = "Any other type"
 
-f_dispatch_eltype(wrap((1,2)))
-f_dispatch_eltype(wrap((1.0,2.0)))
-f_dispatch_eltype(wrap((1,2.0))) # error because of mixed type -> Any
+f_dispatch_eltype(wrap_eltype((1,2)))
+f_dispatch_eltype(wrap_eltype((1.0,2.0)))
+f_dispatch_eltype(wrap_eltype((1,2.0))) # error because of mixed type -> Any
+f_dispatch_eltype(wrap_union((1,2.0))) # without storingn eltype
 ```
 
 # Using Length information
@@ -100,19 +101,21 @@ For NTuples and plain ComponentVectors, the length of the object is known
 and can be used to dispatch
 
 ```
-f_dispatch_length(w::AbstractLengthWrapper{2}) = "two items"
-f_dispatch_length(w::AbstractLengthWrapper{0}) = "zero items"
+f_dispatch_length(w::AbstractSizeWrapper{2}) = "two items"
+f_dispatch_length(w::AbstractSizeWrapper{0}) = "zero items"
 
-f_dispatch_length(wrap((1.0,2.0)))
-f_dispatch_length(wrap(()))
+using ComponentArrays
+f_dispatch_length(wrap_size(ComponentVector(a=1.0,b=2.0)))
+f_dispatch_length(wrap_size(ComponentVector()))
 ```
 
-Or it can be used to create StaticVectors.
+Or it can be used to create StaticVectors in a type-inferred manner.
 
 ```
 using StaticArrays, Test
-f_gen_static(w::AbstractLengthWrapper{N,E}) where {N,E} = SVector{N,E}(unwrap(w)...)::SVector{N,E}
-@inferred f_gen_static(wrap((a=1,b=2)))
+using ComponentArrays
+f_gen_static(w::AbstractSizeWrapper{N,E}) where {N,E} = SVector{N,E}(unwrap(w)...)::SVector{N,E}
+@inferred f_gen_static(wrap_size(ComponentVector(a=1,b=2)))
 ```
 
 

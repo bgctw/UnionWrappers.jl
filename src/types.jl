@@ -2,8 +2,8 @@
     AbstractUnionWrapper{T}
 
 Basic Wrapper that stores a single type parameter to distinguish different
-wrapped types for dispatch.
-For instance, see `AnyWrapper`.
+wrapped types for dispatch. 
+The default `wrap_union` creates a wrapper for uniontype `Any`.
 """    
 abstract type AbstractUnionWrapper{T} end
 
@@ -13,29 +13,30 @@ abstract type AbstractUnionWrapper{T} end
 
 Wrapper that stores an additional element type as a type parameter.
 The element type can be queried using `eltype(w)`.
-For instance, see `ComponentArrayWrapper`.
+There are implementations of `wrap_eltype` for `NTuple` and `NamedTuple`
 """    
-abstract type AbstractEltypeWrapper{E,T} <: AbstractUnionWrapper{T} end
+abstract type AbstractEltypeWrapper{E,T} <: AbstractUnionWrapper{T} end,
+function wrap_eltype end
 Base.eltype(w::AbstractEltypeWrapper{E,T}) where {T,E} = E
 
-
 """
-    AbstractLengthWrapper{N,E,T} <: AbstractEltypeWrapper{E,T}
+    AbstractSizeWrapper{N,E,T} <: AbstractEltypeWrapper{E,T}
 
-Wrapper that stores an additional number of elements as a type parameter.
-The number of elements can be queried using `length(w)`.
-For instance, see `NTupleWrapper`.
+Wrapper that stores an additional sizes of dimensions as a type parameter.
+The size can be queried by `size(w)` and the number of elements can be queried using `length(w)`.
+There are implementations fo `wrap_size` for ComponentArray.
 """    
-abstract type AbstractLengthWrapper{N,E,T} <: AbstractEltypeWrapper{E,T} end
-Base.length(w::AbstractLengthWrapper{N,E,T}) where {N,E,T} = N
+abstract type AbstractSizeWrapper{N,E,T} <: AbstractEltypeWrapper{E,T} end,
+function wrap_size end
+Base.length(w::AbstractSizeWrapper{N,E,T}) where {N,E,T} = N
 
 
 struct UnionWrapper{T} <: AbstractUnionWrapper{T}
-    value::Any
+    value::T
 end
 
 """
-    wrap(x)
+    wrap_union(x)
 
 Wraps into a AbstractUnionWrapper type to avoid compilation for types with
 much information in type parameters.
@@ -45,19 +46,20 @@ and its properties preserved in type parameters.
 
 The default produces as `UnionWrapper{Val{:Any}()}`.
 
-See `unwrap(w)` and `wrapped_T(w)` to extract the original value or its type.
+See `unwrap(w)` and `wrapped_union(w)` to extract the original value or the 
+uniontype of the wrapped object.
 """
-function wrap end,
+function wrap_union end,
 function unwrap(w::UnionWrapper) 
     w.value
 end,
-function wrapped_T(w::AbstractUnionWrapper{T}) where {T} 
+function wrapped_union(w::AbstractUnionWrapper{T}) where {T} 
     T
 end
 
 
 struct EltypeWrapper{E,T} <: AbstractEltypeWrapper{E,T}
-    value::Any
+    value::T
 end
 unwrap(w::EltypeWrapper) = w.value
 
@@ -70,9 +72,9 @@ unwrap(w::EltypeWrapper) = w.value
 # end
 
 
-struct LengthWrapper{N,E,T} <: AbstractLengthWrapper{N,E,T}
-    value::Any
+struct SizeWrapper{N,E,T} <: AbstractSizeWrapper{N,E,T}
+    value::T
 end
-unwrap(w::LengthWrapper) = w.value
+unwrap(w::SizeWrapper) = w.value
 
 
