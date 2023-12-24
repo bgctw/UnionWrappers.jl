@@ -24,7 +24,7 @@ Base.eltype(w::AbstractEltypeWrapper{E,T}) where {T,E} = E
 
 Wrapper that stores an additional sizes of dimensions as a type parameter.
 The size can be queried by `size(w)` and the number of elements can be queried using `length(w)`.
-There are implementations fo `wrap_size` for ComponentArray.
+There are implementations of `wrap_size` for ComponentArray.
 """    
 abstract type AbstractSizeWrapper{N,E,T} <: AbstractEltypeWrapper{E,T} end,
 function wrap_size end
