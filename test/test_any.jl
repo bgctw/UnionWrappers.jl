@@ -7,4 +7,3 @@ using Test, SafeTestsets
     @test unwrap(tw) == a
     @test wrapped_union(tw) == Any
 end
-

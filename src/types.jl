@@ -5,7 +5,7 @@ Basic Wrapper that stores a single type parameter to distinguish different
 wrapped types for dispatch. 
 The default `wrap_union` creates a wrapper for uniontype `Any`.
 The abbreviation alias `UWrap{U}` can shorten function signatures.
-"""    
+"""
 abstract type AbstractUnionWrapper{U} end
 UWrap{U} = AbstractUnionWrapper{U}
 
@@ -17,7 +17,7 @@ Wrapper that stores an additional element type as a type parameter.
 The element type can be queried using `eltype(w)`.
 There are implementations of `wrap_eltype` for `NTuple` and `NamedTuple`
 The abbreviation alias `EWrap{U}` can shorten function signatures.
-"""    
+"""
 abstract type AbstractEltypeWrapper{E,U} <: AbstractUnionWrapper{U} end,
 function wrap_eltype end
 
@@ -34,7 +34,7 @@ The size can be queried by `size(w)` and the number of elements `= prod(D)` can 
 using `length(w)`.
 Although `ND` is redundant to `D`, it is stored to allow dispatch on number of dimensions.
 There are implementations of `wrap_size` for ComponentArray.
-"""    
+"""
 abstract type AbstractSizeWrapper{ND,D,E,U} <: AbstractEltypeWrapper{E,U} end,
 function wrap_size end
 Base.length(w::AbstractSizeWrapper{ND,D,E,U}) where {ND,D,E,U} = prod(D)
@@ -60,10 +60,10 @@ See `unwrap(w)` and `wrapped_union(w)` to extract the original value or the
 uniontype of the wrapped object.
 """
 function wrap_union end,
-function unwrap(w::UnionWrapper) 
+function unwrap(w::UnionWrapper)
     w.value
 end,
-function wrapped_union(w::AbstractUnionWrapper{U}) where {U} 
+function wrapped_union(w::AbstractUnionWrapper{U}) where {U}
     U
 end
 
@@ -87,5 +87,3 @@ struct SizeWrapper{ND,D,E,U} <: AbstractSizeWrapper{ND,D,E,U}
 end
 SizeWrapper(D, E, U, v) = SizeWrapper{length(D),D,E,U}(v)
 unwrap(w::SizeWrapper) = w.value
-
-
