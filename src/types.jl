@@ -84,6 +84,11 @@ unwrap(w::EltypeWrapper) = w.value
 
 struct SizeWrapper{ND,D,E,U} <: AbstractSizeWrapper{ND,D,E,U}
     value::U
+    SizeWrapper{ND,D,E,U}(v) where {ND,D,E,U} =
+        ND == length(D) ? new{ND,D,E,U}(v) : error("ND must match length(D)")
 end
-SizeWrapper(D, E, U, v) = SizeWrapper{length(D),D,E,U}(v)
+function SizeWrapper{E,U}(v) where {E,U}
+    s = size(v)
+    SizeWrapper{length(s),s,E,U}(v)
+end
 unwrap(w::SizeWrapper) = w.value
