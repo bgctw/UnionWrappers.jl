@@ -54,13 +54,14 @@ cases below.
 
 # Dispatching on wrapped type parameter
 
-The `AbstractUnionWrapper` type has a type parameter that can be used
+The `AbstractUnionWrapper` type, which has an alias `UWrap`,
+has a type parameter that can be used
 to dispatch on different wrapped types.
 
 ```
-f_dispatch_type(w::AbstractUnionWrapper{NTuple}) = "NTuple"
-f_dispatch_type(w::AbstractUnionWrapper{NamedTuple}) = "NamedTuple"
-f_dispatch_type(w::AbstractUnionWrapper) = "any other type"
+f_dispatch_type(w::UWrap{NTuple}) = "NTuple"
+f_dispatch_type(w::UWrap{NamedTuple}) = "NamedTuple"
+f_dispatch_type(w::UWrap) = "any other type"
 
 f_dispatch_type(wrap_union((a=1, b=2)))
 f_dispatch_type(wrap_union((1,2)))
@@ -72,7 +73,7 @@ The user can extend the `wrap_union` method to define her own types to dispatch 
 # define user-define wrapper type
 UnionWrappers.wrap_union(s::AbstractString) = UnionWrapper{AbstractString}(s)
 
-f_dispatch_type(w::AbstractUnionWrapper{AbstractString}) = "String"
+f_dispatch_type(w::UWrap{AbstractString}) = "String"
 f_dispatch_type(wrap_union("Hello"))   # now uses the String-method instead of Any
 ```
 
@@ -85,14 +86,14 @@ and can be used for dispatch.
 The corresponding wrappers are constructed using `wrap_eltype`.
 
 ```
-f_dispatch_eltype(w::AbstractEltypeWrapper{Float64}) = "Float"
-f_dispatch_eltype(w::AbstractEltypeWrapper{Int}) = "Int"
-f_dispatch_eltype(w::AbstractUnionWrapper) = "Any other type"
+f_dispatch_eltype(w::EWrap{Int}) = "Int elements"
+f_dispatch_eltype(w::EWrap{<:Number}) = "Number subtype elements"
+f_dispatch_eltype(w::EWrap) = "Any other element type"
 
 f_dispatch_eltype(wrap_eltype((1,2)))
 f_dispatch_eltype(wrap_eltype((1.0,2.0)))
+f_dispatch_eltype(wrap_eltype(("Hello",)))
 f_dispatch_eltype(wrap_eltype((1,2.0))) # error because of mixed type
-f_dispatch_eltype(wrap_union((1,2.0)))  # without storing eltype -> Any
 ```
 
 # Using Length information

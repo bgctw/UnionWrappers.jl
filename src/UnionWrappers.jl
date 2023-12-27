@@ -1,6 +1,6 @@
 module UnionWrappers
 
-export AbstractUnionWrapper, AbstractEltypeWrapper, AbstractSizeWrapper
+export AbstractUnionWrapper, AbstractEltypeWrapper, AbstractSizeWrapper, UWrap, EWrap
 export UnionWrapper, EltypeWrapper, SizeWrapper # to allow user define own wrappers
 export wrap_union, wrap_eltype, wrap_size, unwrap, wrapped_union
 include("types.jl")

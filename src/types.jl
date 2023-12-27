@@ -4,8 +4,10 @@
 Basic Wrapper that stores a single type parameter to distinguish different
 wrapped types for dispatch. 
 The default `wrap_union` creates a wrapper for uniontype `Any`.
+The abbreviation alias `UWrap{T}` can shorten function signatures.
 """    
 abstract type AbstractUnionWrapper{T} end
+UWrap{T} = AbstractUnionWrapper{T}
 
 
 """
@@ -14,10 +16,14 @@ abstract type AbstractUnionWrapper{T} end
 Wrapper that stores an additional element type as a type parameter.
 The element type can be queried using `eltype(w)`.
 There are implementations of `wrap_eltype` for `NTuple` and `NamedTuple`
+The abbreviation alias `EWrap{T}` can shorten function signatures.
 """    
 abstract type AbstractEltypeWrapper{E,T} <: AbstractUnionWrapper{T} end,
 function wrap_eltype end
+
 Base.eltype(w::AbstractEltypeWrapper{E,T}) where {T,E} = E
+
+EWrap{E,T} = AbstractEltypeWrapper{E,T}
 
 """
     AbstractSizeWrapper{D,E,T} <: AbstractEltypeWrapper{E,T}
