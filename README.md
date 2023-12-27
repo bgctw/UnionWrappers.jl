@@ -80,7 +80,7 @@ f_dispatch_type(wrap_union("Hello"))   # now uses the String-method instead of A
 # Dispatching on element type of wrapped objects
 
 When wrapping collections of the same element type, such as NTuple or
-a NamedTuple of NTupel, the element type is stored with the wrapper
+a NamedTuple of NTuple, the element type is stored with the wrapper
 and can be used for dispatch.
 
 The corresponding wrappers are constructed using `wrap_eltype`.
@@ -96,7 +96,7 @@ f_dispatch_eltype(wrap_eltype(("Hello",)))
 f_dispatch_eltype(wrap_eltype((1,2.0))) # error because of mixed type
 ```
 
-# Dispatching on Dimesnion of arrays
+# Dispatching on Dimension of arrays
 
 For simple ComponentArrays, the size of the array dimensions are known.
 The number of dimensions and their sizes can be stored in the wrapper in addition 
@@ -112,7 +112,7 @@ f_dispatch_length(w::AbstractSizeWrapper{1}) = "nonempty vector"
 
 using ComponentArrays
 f_dispatch_dim(wrap_size(ComponentVector(a=1.0,b=2.0))) == "vector"
-f_dispatch_length(wrap_size(ComponentVector())) == "emtpy vector"
+f_dispatch_length(wrap_size(ComponentVector())) == "empty vector"
 f_dispatch_length(wrap_size(ComponentVector(a=1.0,))) == "nonempty vector"
 ```
 
