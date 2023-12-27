@@ -96,30 +96,37 @@ f_dispatch_eltype(wrap_eltype(("Hello",)))
 f_dispatch_eltype(wrap_eltype((1,2.0))) # error because of mixed type
 ```
 
-# Using Length information
+# Dispatching on Dimesnion of arrays
 
 For simple ComponentArrays, the size of the array dimensions are known.
-The can be stored in the wrapper in addition to the element type using `wrap_size`.
+The number of dimensions and their sizes can be stored in the wrapper in addition 
+to the element type using `wrap_size`.
 Then, they can be used in dispatch.
 
 ```
-f_dispatch_length(w::AbstractSizeWrapper{(2,)}) = "two items"
-f_dispatch_length(w::AbstractSizeWrapper{(0,)}) = "zero items"
+f_dispatch_dim(w::AbstractSizeWrapper{1}) = "vector"
+f_dispatch_dim(w::AbstractSizeWrapper) = "higher dimensions"
+
+f_dispatch_length(w::AbstractSizeWrapper{1,(0,)}) = "empty vector"
+f_dispatch_length(w::AbstractSizeWrapper{1}) = "nonempty vector"
 
 using ComponentArrays
-f_dispatch_length(wrap_size(ComponentVector(a=1.0,b=2.0)))
-f_dispatch_length(wrap_size(ComponentVector()))
+f_dispatch_dim(wrap_size(ComponentVector(a=1.0,b=2.0))) == "vector"
+f_dispatch_length(wrap_size(ComponentVector())) == "emtpy vector"
+f_dispatch_length(wrap_size(ComponentVector(a=1.0,))) == "nonempty vector"
 ```
 
-Or they can be used to create StaticVectors in a stable type-inferred manner.
+# Using Length information for stack allocation
+
+The size can also be used create StaticVectors in a stable type-inferred manner.
 
 ```
 using StaticArrays, Test
 using ComponentArrays
-function f_gen_static(w::AbstractSizeWrapper{D,E}) where {D,E} 
-  S = Tuple{D...}; L = prod(D); N = length(D)
-  SArray{S,E,N,L}(unwrap(w)...)::SArray{S,E,N,L}
+function f_gen_svector(w::AbstractSizeWrapper{1,D,E}) where {D,E} 
+  N = first(D)
+  SVector{N,E}(unwrap(w)...)::SVector{N,E}
 end
 w = wrap_size(ComponentVector(a=1,b=2))
-@inferred f_gen_static(w)
+@inferred f_gen_svector(w)
 ```

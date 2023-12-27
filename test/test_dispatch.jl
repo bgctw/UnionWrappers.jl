@@ -21,11 +21,19 @@ end;
   @test_throws MethodError f_dispatch_eltype(wrap_union((1,2.0))) # not an NTuple but of mixed type -> Any
 end;
 
-@testset "dispatch length" begin
-  f_dispatch_length(w::AbstractSizeWrapper{(2,)}) = "two items"
-  f_dispatch_length(w::AbstractSizeWrapper{(0,)}) = "zero items"
+@testset "dispatch dim" begin
+  f_dispatch_dim(w::AbstractSizeWrapper{1}) = "vector"
+  f_dispatch_dim(w::AbstractSizeWrapper) = "higher dimensions"
   
-  @test f_dispatch_length(wrap_size(ComponentVector(a=1.0,b=2.0))) == "two items"
+  @test f_dispatch_dim(wrap_size(ComponentVector(a=1.0,b=2.0))) == "vector"
+end;
+
+
+@testset "dispatch length" begin
+  f_dispatch_length(w::AbstractSizeWrapper{1,(0,)}) = "zero items"
+  f_dispatch_length(w::AbstractSizeWrapper{1}) = "nonempty vector"
+
+  @test f_dispatch_length(wrap_size(ComponentVector(a=1.0,))) == "nonempty vector"
   @test f_dispatch_length(wrap_size(ComponentVector())) == "zero items"
 end;
 

@@ -26,16 +26,19 @@ Base.eltype(w::AbstractEltypeWrapper{E,U}) where {U,E} = E
 EWrap{E,U} = AbstractEltypeWrapper{E,U}
 
 """
-    AbstractSizeWrapper{D,E,U} <: AbstractEltypeWrapper{E,U}
+    AbstractSizeWrapper{ND,D,E,U} <: AbstractEltypeWrapper{E,U}
 
-Wrapper that stores an additional sizes of dimensions as a type parameter.
-The size can be queried by `size(w)` and the number of elements can be queried using `length(w)`.
+Wrapper that stores an additional number of dimensions, `ND == length(D)`, 
+and sizes of dimensions, `D`, as type parameters.
+The size can be queried by `size(w)` and the number of elements `= prod(D)` can be queried 
+using `length(w)`.
+Although `ND` is redundant to `D`, it is stored to allow dispatch on number of dimensions.
 There are implementations of `wrap_size` for ComponentArray.
 """    
-abstract type AbstractSizeWrapper{D,E,U} <: AbstractEltypeWrapper{E,U} end,
+abstract type AbstractSizeWrapper{ND,D,E,U} <: AbstractEltypeWrapper{E,U} end,
 function wrap_size end
-Base.length(w::AbstractSizeWrapper{D,E,U}) where {D,E,U} = prod(D)
-Base.size(w::AbstractSizeWrapper{D,E,U}) where {D,E,U} = D
+Base.length(w::AbstractSizeWrapper{ND,D,E,U}) where {ND,D,E,U} = prod(D)
+Base.size(w::AbstractSizeWrapper{ND,D,E,U}) where {ND,D,E,U} = D
 
 
 struct UnionWrapper{U} <: AbstractUnionWrapper{U}
@@ -79,9 +82,10 @@ unwrap(w::EltypeWrapper) = w.value
 # end
 
 
-struct SizeWrapper{D,E,U} <: AbstractSizeWrapper{D,E,U}
+struct SizeWrapper{ND,D,E,U} <: AbstractSizeWrapper{ND,D,E,U}
     value::U
 end
+SizeWrapper(D, E, U, v) = SizeWrapper{length(D),D,E,U}(v)
 unwrap(w::SizeWrapper) = w.value
 
 
