@@ -11,14 +11,14 @@ For help see the docstring of `wrap_union`.
 
 Julia recompiles functions for new argument types, and argument types change 
 with type parameters. This results in compiling many method instances when using types
-that store much informationin in their type parameters.
+that store much information in their type parameters.
 
 For example, when a function takes a `NamedTuple` argument, it will be recompiled
 for each new value with different names.
 
-This package aovids compilation by passing around arguments 
+This package avoids compilation by passing around arguments 
 that are wrapped into types with fewer type information. 
-Only when specific dispatch or runtime-performa is required at the lower-level
+Only when specific dispatch or runtime-performance is required at the lower-level
 functions, pass the unwrapped argument can be passed.
 
 # Example
@@ -54,13 +54,14 @@ cases below.
 
 # Dispatching on wrapped type parameter
 
-The `AbstractUnionWrapper` type has a type parameter that can be used
+The `AbstractUnionWrapper` type, which has an alias `UWrap`,
+has a type parameter that can be used
 to dispatch on different wrapped types.
 
 ```
-f_dispatch_type(w::AbstractUnionWrapper{NTuple}) = "NTuple"
-f_dispatch_type(w::AbstractUnionWrapper{NamedTuple}) = "NamedTuple"
-f_dispatch_type(w::AbstractUnionWrapper) = "any other type"
+f_dispatch_type(w::UWrap{NTuple}) = "NTuple"
+f_dispatch_type(w::UWrap{NamedTuple}) = "NamedTuple"
+f_dispatch_type(w::UWrap) = "any other type"
 
 f_dispatch_type(wrap_union((a=1, b=2)))
 f_dispatch_type(wrap_union((1,2)))
@@ -72,53 +73,60 @@ The user can extend the `wrap_union` method to define her own types to dispatch 
 # define user-define wrapper type
 UnionWrappers.wrap_union(s::AbstractString) = UnionWrapper{AbstractString}(s)
 
-f_dispatch_type(w::AbstractUnionWrapper{AbstractString}) = "String"
+f_dispatch_type(w::UWrap{AbstractString}) = "String"
 f_dispatch_type(wrap_union("Hello"))   # now uses the String-method instead of Any
 ```
 
 # Dispatching on element type of wrapped objects
 
 When wrapping collections of the same element type, such as NTuple or
-a NamedTuple of NTupe, the element type is stored with the wrapper
+a NamedTuple of NTuple, the element type is stored with the wrapper
 and can be used for dispatch.
 
 The corresponding wrappers are constructed using `wrap_eltype`.
 
 ```
-f_dispatch_eltype(w::AbstractEltypeWrapper{Float64}) = "Float"
-f_dispatch_eltype(w::AbstractEltypeWrapper{Int}) = "Int"
-f_dispatch_eltype(w::AbstractUnionWrapper) = "Any other type"
+f_dispatch_eltype(w::EWrap{Int}) = "Int elements"
+f_dispatch_eltype(w::EWrap{<:Number}) = "Number subtype elements"
+f_dispatch_eltype(w::EWrap) = "Any other element type"
 
 f_dispatch_eltype(wrap_eltype((1,2)))
 f_dispatch_eltype(wrap_eltype((1.0,2.0)))
+f_dispatch_eltype(wrap_eltype(("Hello",)))
 f_dispatch_eltype(wrap_eltype((1,2.0))) # error because of mixed type
-f_dispatch_eltype(wrap_union((1,2.0)))  # without storing eltype -> Any
 ```
 
-# Using Length information
+# Dispatching on Dimension of arrays
 
 For simple ComponentArrays, the size of the array dimensions are known.
-The can be stored in the wrapper in addition to the element type using `wrap_size`.
+The number of dimensions and their sizes can be stored in the wrapper in addition 
+to the element type using `wrap_size`.
 Then, they can be used in dispatch.
 
 ```
-f_dispatch_length(w::AbstractSizeWrapper{(2,)}) = "two items"
-f_dispatch_length(w::AbstractSizeWrapper{(0,)}) = "zero items"
+f_dispatch_dim(w::AbstractSizeWrapper{1}) = "vector"
+f_dispatch_dim(w::AbstractSizeWrapper) = "higher dimensions"
+
+f_dispatch_length(w::AbstractSizeWrapper{1,(0,)}) = "empty vector"
+f_dispatch_length(w::AbstractSizeWrapper{1}) = "nonempty vector"
 
 using ComponentArrays
-f_dispatch_length(wrap_size(ComponentVector(a=1.0,b=2.0)))
-f_dispatch_length(wrap_size(ComponentVector()))
+f_dispatch_dim(wrap_size(ComponentVector(a=1.0,b=2.0))) == "vector"
+f_dispatch_length(wrap_size(ComponentVector())) == "empty vector"
+f_dispatch_length(wrap_size(ComponentVector(a=1.0,))) == "nonempty vector"
 ```
 
-Or they can be used to create StaticVectors in a stable type-inferred manner.
+# Using Length information for stack allocation
+
+The size can also be used create StaticVectors in a stable type-inferred manner.
 
 ```
 using StaticArrays, Test
 using ComponentArrays
-function f_gen_static(w::AbstractSizeWrapper{D,E}) where {D,E} 
-  S = Tuple{D...}; L = prod(D); N = length(D)
-  SArray{S,E,N,L}(unwrap(w)...)::SArray{S,E,N,L}
+function f_gen_svector(w::AbstractSizeWrapper{1,D,E}) where {D,E} 
+  N = first(D)
+  SVector{N,E}(unwrap(w)...)::SVector{N,E}
 end
 w = wrap_size(ComponentVector(a=1,b=2))
-@inferred f_gen_static(w)
+@inferred f_gen_svector(w)
 ```

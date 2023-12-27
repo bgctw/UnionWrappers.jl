@@ -12,8 +12,8 @@ using Test, SafeTestsets
     @test unwrap(tw) == t
     @test wrapped_union(tw) == NTuple
     # changing the wrapped object is not allowed
-    @test_throws ErrorException tw.value = (:c,) 
-    # type T and wrapped object must match
+    @test_throws ErrorException tw.value = (:c,)
+    # type U and wrapped object must match
     @test_throws MethodError UnionWrapper{NamedTuple}(t)
 end
 
