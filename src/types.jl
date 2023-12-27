@@ -1,45 +1,45 @@
 """
-    AbstractUnionWrapper{T}
+    AbstractUnionWrapper{U}
 
 Basic Wrapper that stores a single type parameter to distinguish different
 wrapped types for dispatch. 
 The default `wrap_union` creates a wrapper for uniontype `Any`.
-The abbreviation alias `UWrap{T}` can shorten function signatures.
+The abbreviation alias `UWrap{U}` can shorten function signatures.
 """    
-abstract type AbstractUnionWrapper{T} end
-UWrap{T} = AbstractUnionWrapper{T}
+abstract type AbstractUnionWrapper{U} end
+UWrap{U} = AbstractUnionWrapper{U}
 
 
 """
-    AbstractEltypeWrapper{E,T} <: AbstractUnionWrapper{T}
+    AbstractEltypeWrapper{E,U} <: AbstractUnionWrapper{U}
 
 Wrapper that stores an additional element type as a type parameter.
 The element type can be queried using `eltype(w)`.
 There are implementations of `wrap_eltype` for `NTuple` and `NamedTuple`
-The abbreviation alias `EWrap{T}` can shorten function signatures.
+The abbreviation alias `EWrap{U}` can shorten function signatures.
 """    
-abstract type AbstractEltypeWrapper{E,T} <: AbstractUnionWrapper{T} end,
+abstract type AbstractEltypeWrapper{E,U} <: AbstractUnionWrapper{U} end,
 function wrap_eltype end
 
-Base.eltype(w::AbstractEltypeWrapper{E,T}) where {T,E} = E
+Base.eltype(w::AbstractEltypeWrapper{E,U}) where {U,E} = E
 
-EWrap{E,T} = AbstractEltypeWrapper{E,T}
+EWrap{E,U} = AbstractEltypeWrapper{E,U}
 
 """
-    AbstractSizeWrapper{D,E,T} <: AbstractEltypeWrapper{E,T}
+    AbstractSizeWrapper{D,E,U} <: AbstractEltypeWrapper{E,U}
 
 Wrapper that stores an additional sizes of dimensions as a type parameter.
 The size can be queried by `size(w)` and the number of elements can be queried using `length(w)`.
 There are implementations of `wrap_size` for ComponentArray.
 """    
-abstract type AbstractSizeWrapper{D,E,T} <: AbstractEltypeWrapper{E,T} end,
+abstract type AbstractSizeWrapper{D,E,U} <: AbstractEltypeWrapper{E,U} end,
 function wrap_size end
-Base.length(w::AbstractSizeWrapper{D,E,T}) where {D,E,T} = prod(D)
-Base.size(w::AbstractSizeWrapper{D,E,T}) where {D,E,T} = D
+Base.length(w::AbstractSizeWrapper{D,E,U}) where {D,E,U} = prod(D)
+Base.size(w::AbstractSizeWrapper{D,E,U}) where {D,E,U} = D
 
 
-struct UnionWrapper{T} <: AbstractUnionWrapper{T}
-    value::T
+struct UnionWrapper{U} <: AbstractUnionWrapper{U}
+    value::U
 end
 
 """
@@ -60,13 +60,13 @@ function wrap_union end,
 function unwrap(w::UnionWrapper) 
     w.value
 end,
-function wrapped_union(w::AbstractUnionWrapper{T}) where {T} 
-    T
+function wrapped_union(w::AbstractUnionWrapper{U}) where {U} 
+    U
 end
 
 
-struct EltypeWrapper{E,T} <: AbstractEltypeWrapper{E,T}
-    value::T
+struct EltypeWrapper{E,U} <: AbstractEltypeWrapper{E,U}
+    value::U
 end
 unwrap(w::EltypeWrapper) = w.value
 
@@ -79,8 +79,8 @@ unwrap(w::EltypeWrapper) = w.value
 # end
 
 
-struct SizeWrapper{D,E,T} <: AbstractSizeWrapper{D,E,T}
-    value::T
+struct SizeWrapper{D,E,U} <: AbstractSizeWrapper{D,E,U}
+    value::U
 end
 unwrap(w::SizeWrapper) = w.value
 

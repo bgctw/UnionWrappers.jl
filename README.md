@@ -11,14 +11,14 @@ For help see the docstring of `wrap_union`.
 
 Julia recompiles functions for new argument types, and argument types change 
 with type parameters. This results in compiling many method instances when using types
-that store much informationin in their type parameters.
+that store much information in their type parameters.
 
 For example, when a function takes a `NamedTuple` argument, it will be recompiled
 for each new value with different names.
 
-This package aovids compilation by passing around arguments 
+This package avoids compilation by passing around arguments 
 that are wrapped into types with fewer type information. 
-Only when specific dispatch or runtime-performa is required at the lower-level
+Only when specific dispatch or runtime-performance is required at the lower-level
 functions, pass the unwrapped argument can be passed.
 
 # Example
@@ -80,7 +80,7 @@ f_dispatch_type(wrap_union("Hello"))   # now uses the String-method instead of A
 # Dispatching on element type of wrapped objects
 
 When wrapping collections of the same element type, such as NTuple or
-a NamedTuple of NTupe, the element type is stored with the wrapper
+a NamedTuple of NTupel, the element type is stored with the wrapper
 and can be used for dispatch.
 
 The corresponding wrappers are constructed using `wrap_eltype`.

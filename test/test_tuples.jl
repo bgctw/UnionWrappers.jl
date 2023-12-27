@@ -13,7 +13,7 @@ using Test, SafeTestsets
     @test wrapped_union(tw) == NTuple
     # changing the wrapped object is not allowed
     @test_throws ErrorException tw.value = (:c,) 
-    # type T and wrapped object must match
+    # type U and wrapped object must match
     @test_throws MethodError UnionWrapper{NamedTuple}(t)
 end
 
