@@ -8,5 +8,6 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 UnionWrappers = "74a707ba-e539-4b25-b122-a64fb4a1bb11"
 
 [compat]
+ComponentArrays = "0.15.42"
 SafeTestsets = "0.1.0"
 StaticArrays = "1.9.18"
