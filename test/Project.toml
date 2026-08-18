@@ -9,3 +9,5 @@ UnionWrappers = "74a707ba-e539-4b25-b122-a64fb4a1bb11"
 
 [compat]
 Aqua = "0.8.16"
+SafeTestsets = "0.1.0"
+StaticArrays = "1.9.18"
