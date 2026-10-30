@@ -10,7 +10,7 @@ UnionWrappers = "74a707ba-e539-4b25-b122-a64fb4a1bb11"
 [compat]
 Aqua = "0.8"
 ComponentArrays = "0.15.42"
-JET = "0.9, 0.10, 0.11, 0.12"
+JET = "0.9, 0.10, 0.11, 0.12, 0.13"
 SafeTestsets = "0.1.0"
 StaticArrays = "1.9.18"
 Test = "1"
